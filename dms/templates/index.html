@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dust Monitoring System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}?v=9">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <body style="background-image: url('C:\Users\Naga Varun\OneDrive\Desktop\dms\background.jpg');"></body>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="text-primary">Serial Data:</h2>
+                <span id="dustDensity" class="text-info"></span>
+                <a href="{{ url_for('table') }}" class="btn btn-info btn-block" target="_blank">View Dust Density Table</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io.connect('http://127.0.0.1:5000');
+
+        socket.on('serial_data', function (data) {
+            const dustDensity = document.getElementById('dustDensity');
+            dustDensity.textContent = ` ${data.data}`;
+        });
+    </script>
+</body>
+</html>

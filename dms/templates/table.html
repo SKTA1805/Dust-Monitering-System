@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dust Density Table</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='custom-styles.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-primary">Dust Density Table</h2>
+
+        <!-- Table to display dust density -->
+        <div id="tableContainer" style="max-height: 300px; overflow-y: auto;">
+            <table id="densityTable" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">Dust Density</th>
+                        <th scope="col">Timestamp</th>
+                        <!-- Add more columns if needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table content will be dynamically updated here using JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add a link back to the main page with a JavaScript function to close the tab -->
+        <a href="{{ url_for('index') }}" class="btn btn-info mt-3" onclick="closeCurrentTab()">Back to Main Page</a>
+    </div>
+
+    <!-- Include Bootstrap JS and any additional scripts if needed -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- Include Socket.IO for real-time updates -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    
+    <!-- Your custom JavaScript for real-time updates and closing the tab -->
+    <script>
+        // Function to get the current time in HH:MM:SS format
+        function getCurrentTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            return `${hours}:${minutes}:${seconds}`;
+        }
+
+        const socket = io.connect('http://127.0.0.1:5000');  // Replace with your server address
+
+        socket.on('update_density_table', function (data) {
+            // Update the table content dynamically
+            const densityTableBody = document.getElementById('densityTable').getElementsByTagName('tbody')[0];
+            
+            // Create a new table row with dust density and timestamp
+            const row = `<tr>
+                            <td>${data.density}</td>
+                            <td>${getCurrentTime()}</td>
+                            <!-- Add more columns if needed -->
+                         </tr>`;
+            
+            // Append the new row to the table
+            densityTableBody.innerHTML += row;
+
+            // Scroll to the bottom of the container
+            const tableContainer = document.getElementById('tableContainer');
+            tableContainer.scrollTop = tableContainer.scrollHeight;
+        });
+
+        // JavaScript function to close the current tab
+        function closeCurrentTab() {
+            window.close();
+        }
+    </script>
+</body>
+</html>
